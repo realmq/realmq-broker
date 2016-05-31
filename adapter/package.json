@@ -1,0 +1,17 @@
+{
+  "name": "gfcc-broker_adapter",
+  "version": "0.0.1",
+  "description": "test adapter for vernemq integration",
+  "license": "UNLICENSED",
+  "author": {
+    "name": "baranga",
+    "email": "baranga@posteo.de",
+    "url": "http://baranga.de"
+  },
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node run.js"
+  },
+  "dependencies": {}
+}
