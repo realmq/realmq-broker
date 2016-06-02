@@ -37,7 +37,8 @@ pid_log_console="$!"
 tail -f /var/log/vernemq/error.log &
 pid_log_error="$!"
 
-# enable plugins
+# configure plugins
+vmq-admin plugin disable -n vmq_acl
 vmq-admin plugin enable -n vmq_diversity -p /opt/vmq_diversity/_build/default
 vmq-admin script load path=/opt/gfcc/adapter.lua
 
