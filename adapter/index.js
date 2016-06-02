@@ -39,12 +39,13 @@ class Adapter {
   }
 
   _onRequest(request, response) {
+    console.log(`${request.method} ${request.url}`);
     const params = url.parse(request.url);
     switch (params.pathname) {
       case '/': this._onInfo(request, response); break;
       case '/ping': this._onPing(request, response); break;
       case '/auth': this._onAuth(request, response); break;
-      case '/stat': this._onStat(request, response); break;
+      case '/status': this._onStatus(request, response); break;
       case '/pub': this._onPub(request, response); break;
       case '/sub': this._onSub(request, response); break;
       default:
@@ -77,14 +78,14 @@ class Adapter {
       return this._denyMethod(response, 'GET');
     }
     const params = url.parse(request.url, true);
-    const clientId = params.query.c;
+    const cid = params.query.c;
     const username = params.query.u;
     const password = params.query.p;
 
     const status = {
       auth: false
     };
-    if (clientId === 'dada') {
+    if (cid === 'dada' || cid.indexOf('dada-') === 0) {
       status.auth = true;
       status.uid = 'uid-dada';
     }
@@ -94,12 +95,50 @@ class Adapter {
     response.end();
   }
 
-  _onStat(request, response) {
+  _onStatus(request, response) {
     if (request.method !== 'POST') {
       return this._denyMethod(response, 'POST');
     }
-    response.statusCode = 204;
-    response.end();
+
+    if (request.headers['content-type'] !== 'application/json') {
+      console.log('invalid content-type header: ' + request.headers['content-type']);
+      return this._denyContentType(response, 'application/json');
+    }
+
+    const params = url.parse(request.url, true);
+    const cid = params.query.c;
+    const uid = params.query.u;
+
+    if (!cid && !uid) {
+      console.log('400 - missing param');
+      response.statusCode = 400;
+      response.end();
+      return;
+    }
+
+    var body = '';
+    request.on('data', data => body += data);
+    request.on('end', () => {
+      console.log('body: ' + body);
+      var data;
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        console.log('json parse error: ' + body);
+        return this._denyContentType(response, 'application/json');
+      }
+      if (!data || data.status !== 'online' && data.status !== 'offline') {
+        console.log('400 - missing json data');
+        response.statusCode = 400;
+        response.end();
+        return;
+      }
+
+      console.log(`user ${uid} with client ${cid} is ${data.status}`);
+
+      response.statusCode = 204;
+      response.end();
+    });
   }
 
   _onPub(request, response) {
@@ -108,13 +147,14 @@ class Adapter {
     }
     const params = url.parse(request.url, true);
     const clientId = params.query.c;
-    const pattern = params.query.p;
+    const userId = params.query.u;
+    const topic = params.query.t;
 
     const status = {
       auth: false
     };
 
-    if (clientId === 'dada' && pattern.indexOf('/test/') === 0) {
+    if (topic.indexOf('test/') === 0) {
       status.auth = true;
     }
 
@@ -124,21 +164,79 @@ class Adapter {
   }
 
   _onSub(request, response) {
-    if (request.method !== 'GET') {
-      return this._denyMethod(response, 'GET');
+    if (request.method !== 'POST') {
+      return this._denyMethod(response, 'POST');
     }
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.write("pong\n");
-    response.end();
+    if (request.headers['content-type'] != 'application/json') {
+      return this._denyContentType(response, 'application/json');
+    }
+
+    const params = url.parse(request.url, true);
+    const cid = params.query.c;
+    const uid = params.query.u;
+
+    if (!cid && !uid) {
+      console.log('400 - missing param');
+      response.statusCode = 400;
+      response.end();
+      return;
+    }
+
+    var body = '';
+    request.on('data', data => body += data);
+    request.on('end', () => {
+      console.log('body: ' + body);
+      var data;
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        console.log('json parse error: ' + body);
+        return this._denyContentType(response, 'application/json');
+      }
+      if (!data || !data.subscriptions) {
+        console.log('400 - missing json data');
+        response.statusCode = 400;
+        response.end();
+        return;
+      }
+
+      const subscriptions = {};
+      for (var pattern in data.subscriptions) {
+        if (pattern.indexOf('test/') === 0) {
+          subscriptions[pattern] = data.subscriptions[pattern];
+        } else {
+          subscriptions[pattern] = false;
+        }
+      }
+
+      const status = {
+        auth: true,
+        subscriptions: subscriptions
+      };
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.write(JSON.stringify(status) + "\n");
+      response.end();
+    });
   }
 
   _denyMethod(response, allowedMethods) {
+    console.log('405 - deny method');
     if (allowedMethods.join) {
       allowedMethods = allowedMethods.join(',');
     }
     response.writeHead(405, {
-      'Content-Type': 'text/plain',
       'Allow': allowedMethods
+    });
+    response.end();
+  }
+
+  _denyContentType(response, allowedContentTypes) {
+    console.log('415 - deny content type');
+    if (allowedContentTypes.join) {
+      allowedContentTypes = allowedContentTypes.join(',');
+    }
+    response.writeHead(415, {
+      'Accept': allowedContentTypes
     });
     response.end();
   }
