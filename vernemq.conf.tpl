@@ -570,7 +570,7 @@ log.console = file
 ##
 ## Acceptable values:
 ##   - one of: debug, info, warning, error
-log.console.level = info
+log.console.level = ${LOG_LEVEL}
 
 ## When 'log.console' is set to 'file' or 'both', the file where
 ## console messages will be logged.
