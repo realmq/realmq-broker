@@ -40,7 +40,7 @@ pid_log_error="$!"
 # configure plugins
 vmq-admin plugin disable -n vmq_acl
 vmq-admin plugin enable -n vmq_diversity -p /opt/vmq_diversity/_build/default
-vmq-admin script load path=/opt/gfcc/adapter.lua
+vmq-admin script load path=/opt/gfcc/broker/adapter.lua
 
 # wait indefinetely
 while true
