@@ -19,7 +19,7 @@ COPY build/plugins/vmq_diversity /opt/vmq_diversity
 COPY vernemq.conf.tpl /etc/vernemq/vernemq.conf.tpl
 COPY vernemq.tpl /etc/default/vernemq.tpl
 COPY run.sh /run.sh
-COPY adapter.lua /opt/gfcc/adapter.lua
+COPY adapter.lua /opt/gfcc/broker/adapter.lua
 
 CMD ["/run.sh"]
 EXPOSE 1883
