@@ -16,8 +16,9 @@ RUN wget -q https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/verne
 # add vmq_diversity
 COPY build/plugins/vmq_diversity /opt/vmq_diversity
 
-COPY vernemq.conf.tpl /etc/vernemq/vernemq.conf.tpl
 COPY vernemq.tpl /etc/default/vernemq.tpl
+COPY vernemq.conf.tpl /etc/vernemq/vernemq.conf.tpl
+COPY vmq.acl /etc/vernemq/vmq.acl
 COPY run.sh /run.sh
 COPY adapter.lua /opt/gfcc/broker/adapter.lua
 
