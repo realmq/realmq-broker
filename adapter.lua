@@ -70,33 +70,45 @@ function auth_on_register(reg)
 end
 
 function on_client_wakeup(params)
-  log.debug('on_client_wakeup');
+  log.debug('on_client_wakeup')
   local meta = get_client_meta(params.client_id)
-  update_client_status(params.client_id, meta.uid, "online")
+  if meta ~= nil then
+    update_client_status(params.client_id, meta.uid, "online")
+  end
 end
 
 function on_client_offline(params)
-  log.debug('on_client_offline');
+  log.debug('on_client_offline')
   local meta = get_client_meta(params.client_id)
-  update_client_status(params.client_id, meta.uid, "offline")
-  unset_client_meta(params.client_id)
+  if meta ~= nil then
+    update_client_status(params.client_id, meta.uid, "offline")
+    unset_client_meta(params.client_id)
+  end
 end
 
 function on_client_gone(params)
   log.debug('on_client_gone');
   local meta = get_client_meta(params.client_id)
-  update_client_status(params.client_id, meta.uid, "offline")
-  unset_client_meta(params.client_id)
+  if meta ~= nil then
+    update_client_status(params.client_id, meta.uid, "offline")
+    unset_client_meta(params.client_id)
+  end
 end
 
 function auth_on_subscribe(sub)
-  log.debug('auth_on_subscribe');
+  log.debug('auth_on_subscribe')
+
+  local meta = get_client_meta(sub.client_id)
+  if meta == nil then
+    -- unknown user, next plugin should decide
+    return
+  end
+
   local subscriptions = {}
   for idx, topic in pairs(sub.topics) do
     subscriptions[topic[1]] = topic[2]
   end
 
-  local meta = get_client_meta(sub.client_id)
   local response = http.post(
     "gfcc",
     string.format(
@@ -145,7 +157,13 @@ end
 
 function auth_on_publish(params)
   log.debug('auth_on_publish');
+
   local meta = get_client_meta(params.client_id)
+  if meta == nil then
+    -- unknown user, next plugin should decide
+    return
+  end
+
   local response = http.get(
     "gfcc",
     string.format(
