@@ -15,6 +15,7 @@ term_handler() {
 set -a
 : ${AUTH_ANONYMOUS:=off}
 : ${LOG_LEVEL:=info}
+: ${VMQ_VERSION=0.0.0}
 : ${GFCC_ADAPTER_HOST:=adapter}
 : ${GFCC_ADAPTER_PORT:=80}
 : ${GFCC_ADAPTER_USER:=gfcc-adapter}

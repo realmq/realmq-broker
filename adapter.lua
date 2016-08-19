@@ -24,6 +24,7 @@
 --  - on_offline_message - client got offline message
 --  - on_deliver - message gets send out to client
 
+vmq_version = os.getenv("VMQ_VERSION") or "0.0.0"
 adapter_host = os.getenv("GFCC_ADAPTER_HOST") or "adapter"
 adapter_port = os.getenv("GFCC_ADAPTER_PORT") or "80"
 
@@ -33,12 +34,13 @@ function auth_on_register(reg)
   local response = http.get(
     "gfcc",
     string.format(
-      "http://%s:%s/auth?c=%s&u=%s&p=%s",
+      "http://%s:%s/auth?c=%s&u=%s&p=%s&v=vmq-%s",
       adapter_host,
       adapter_port,
       url_encode(reg.client_id),
       url_encode(reg.username),
-      url_encode(reg.password)
+      url_encode(reg.password),
+      url_encode(vmq_version)
     )
   )
 
