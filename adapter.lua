@@ -24,12 +24,13 @@
 --  - on_offline_message - client got offline message
 --  - on_deliver - message gets send out to client
 
+environment = os.getenv("envrionment") or "develop"
 vmq_version = os.getenv("VMQ_VERSION") or "0.0.0"
 adapter_host = os.getenv("GFCC_ADAPTER_HOST") or "adapter"
 adapter_port = os.getenv("GFCC_ADAPTER_PORT") or "80"
 
 function auth_on_register(reg)
-  log.debug('auth_on_register');
+  log_debug('auth_on_register');
   -- call adapter with client_id, username and password
   local response = http.get(
     "gfcc",
@@ -72,7 +73,7 @@ function auth_on_register(reg)
 end
 
 function on_client_wakeup(params)
-  log.debug('on_client_wakeup')
+  log_debug('on_client_wakeup')
   local meta = get_client_meta(params.client_id)
   if meta ~= nil then
     update_client_status(params.client_id, meta.uid, "online")
@@ -80,7 +81,7 @@ function on_client_wakeup(params)
 end
 
 function on_client_offline(params)
-  log.debug('on_client_offline')
+  log_debug('on_client_offline')
   local meta = get_client_meta(params.client_id)
   if meta ~= nil then
     update_client_status(params.client_id, meta.uid, "offline")
@@ -89,7 +90,7 @@ function on_client_offline(params)
 end
 
 function on_client_gone(params)
-  log.debug('on_client_gone');
+  log_debug('on_client_gone');
   local meta = get_client_meta(params.client_id)
   if meta ~= nil then
     update_client_status(params.client_id, meta.uid, "offline")
@@ -98,7 +99,7 @@ function on_client_gone(params)
 end
 
 function auth_on_subscribe(sub)
-  log.debug('auth_on_subscribe')
+  log_debug('auth_on_subscribe')
 
   local meta = get_client_meta(sub.client_id)
   if meta == nil then
@@ -158,7 +159,7 @@ function auth_on_subscribe(sub)
 end
 
 function auth_on_publish(params)
-  log.debug('auth_on_publish');
+  log_debug('auth_on_publish');
 
   local meta = get_client_meta(params.client_id)
   if meta == nil then
@@ -244,6 +245,12 @@ function url_encode(str)
     function (c) return string.format ("%%%02X", string.byte(c)) end
   )
   return str
+end
+
+function log_debug(str)
+  if (environment == "develop") then
+    log.debug(str)
+  end
 end
 
 http.ensure_pool({pool_id = "gfcc"})

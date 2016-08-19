@@ -20,7 +20,7 @@ set -a
 : ${GFCC_ADAPTER_PORT:=80}
 : ${GFCC_ADAPTER_USER:=gfcc-adapter}
 : ${GFCC_ADAPTER_PASS:=gfcc-adapter}
-: ${ENVIRONMENT:=development}
+: ${ENVIRONMENT:=develop}
 cat /etc/vernemq/vernemq.conf.tpl | envsubst '$AUTH_ANONYMOUS $LOG_LEVEL' > /etc/vernemq/vernemq.conf
 cat /etc/default/vernemq.tpl | envsubst > /etc/default/vernemq
 
