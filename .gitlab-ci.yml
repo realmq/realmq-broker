@@ -1,0 +1,25 @@
+image: docker:latest
+services:
+- docker:dind
+
+stages:
+- build_binaries
+- build_image
+
+variables:
+  IMAGE_REF: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+  IMAGE_LATEST: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+
+build_plugins:
+  stage: build_binaries
+  script:
+    - ./build.sh
+
+build_image:
+  stage: build_image
+  script:
+    - docker build -t $IMAGE_REF .
+    - docker push $IMAGE_REF
