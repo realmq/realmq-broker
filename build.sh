@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 
 docker build -t rfcc/broker/plugins_builder ./plugins
