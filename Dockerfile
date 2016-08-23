@@ -9,9 +9,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 # install vernemq
 ENV VMQ_VERSION 0.13.1
-RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vernemq_${VMQ_VERSION}-1_amd64.deb -o /tmp/vernemq_${VMQ_VERSION}-1_amd64.deb && \
-    dpkg -i /tmp/vernemq_${VMQ_VERSION}-1_amd64.deb && \
-    rm /tmp/vernemq_${VMQ_VERSION}-1_amd64.deb
+RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vernemq_${VMQ_VERSION}-1_amd64.deb -o /tmp/vernemq.deb && \
+    dpkg -i /tmp/vernemq.deb && \
+    rm /tmp/vernemq.deb
 
 # add vmq_diversity
 COPY build/plugins/vmq_diversity /opt/vmq_diversity
