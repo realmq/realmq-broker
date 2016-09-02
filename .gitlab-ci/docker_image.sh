@@ -16,7 +16,7 @@ if [ -z "$CI_BUILD_REF_NAME" ]; then
 fi
 
 root=$(dirname $0)/..
-image_ref=$CI_REGISTRY_IMAGE:$(echo $CI_BUILD_REF_NAME | sed -r 's/[^a-zA-Z0-9_-]/-/g')
+image_ref=$CI_REGISTRY_IMAGE:$(echo $CI_BUILD_REF_NAME | sed -r 's|/|-|g')
 
 set -ex
 docker build -t $image_ref "$root"
