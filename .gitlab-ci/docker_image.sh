@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 if [ -z "$GITLAB_CI" -o "$GITLAB_CI" != "true" ]; then
   echo "invalid environment" 1>&2
