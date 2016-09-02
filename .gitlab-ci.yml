@@ -11,8 +11,4 @@ before_script:
 
 docker_image:
   stage: build
-  script:
-    - tag=$(sed -r 's/[^a-zA-Z0-9_-]/-/g' <<< "$CI_BUILD_REF_NAME")
-    - echo "sanitized tag: ${tag}"
-    - docker build -t $IMAGE_REF .
-    - docker push $IMAGE_REF
+  script: .gitlab-ci/docker_image.sh
