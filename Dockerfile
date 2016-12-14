@@ -1,3 +1,3 @@
-FROM registry.gitlab.com/gfcc/broker-base:0.1.0
+FROM registry.gitlab.com/gfcc/broker-base:develop
 
-COPY scripts/*.lua /opt/gfcc/broker/scripts/
+COPY run/afterStart/*.sh /opt/broker/run/afterStart
