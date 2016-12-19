@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/gfcc/broker-base:vernemq_develop
+FROM registry.gitlab.com/gfcc/broker-base:0.2.0
 
 LABEL \
   description="GFCC Broker" \
