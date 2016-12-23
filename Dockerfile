@@ -1,3 +1,7 @@
-FROM registry.gitlab.com/gfcc/broker-base:0.1.0
+FROM registry.gitlab.com/gfcc/broker-base:vernemq_0.2.0
 
-COPY scripts/*.lua /opt/gfcc/broker/scripts/
+LABEL \
+  description="GFCC Broker" \
+  version="0.2.0"
+
+COPY run/afterStart/*.sh /opt/broker/run/afterStart/
