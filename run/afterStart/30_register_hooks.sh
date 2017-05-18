@@ -12,7 +12,6 @@ function register_hook {
 register_hook auth_on_register
 register_hook auth_on_subscribe
 register_hook auth_on_publish
-register_hook on_deliver
 register_hook on_client_wakeup
 register_hook on_client_offline
 register_hook on_client_gone
