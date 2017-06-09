@@ -1,6 +1,12 @@
 # Broker
 Platform MQTT Frontend
 
+## Docker Env Parameter
+- `HOST` - tbd
+- `ADAPTER_HOST` - tbd
+- `ADAPTER_PORT` - tbd
+- `CREDENTIALS` - tbd
+
 ## Changelog
 ### next
 - upgrade to `broker-base:0.3.0` base image
