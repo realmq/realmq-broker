@@ -457,8 +457,7 @@ shared_subscription_policy = prefer_local
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_passwd = on
-plugins.vmq_passwd.priority = 20
+plugins.vmq_passwd = off
 
 ## File based authorization plugin.
 ##
@@ -466,8 +465,7 @@ plugins.vmq_passwd.priority = 20
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_acl = on
-plugins.vmq_acl.priority = 21
+plugins.vmq_acl = off
 
 ## Lua based plugins.
 ##
@@ -475,8 +473,7 @@ plugins.vmq_acl.priority = 21
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_diversity = on
-plugins.vmq_diversity.priority = 30
+plugins.vmq_diversity = off
 
 ## Webhook based plugins.
 ##
@@ -484,8 +481,7 @@ plugins.vmq_diversity.priority = 30
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_webhooks = on
-plugins.vmq_webhooks.priority = 10
+plugins.vmq_webhooks = off
 
 ## The VerneMQ bridge plugin.
 ##
@@ -732,20 +728,6 @@ vmq_diversity.auth_redis.enabled = off
 ## Acceptable values:
 ##   - text
 ## vmq_webhooks.webhook1.endpoint = http://localhost/myendpoints
-
-vmq_webhooks.gfcc_auth_on_register.hook = auth_on_register
-vmq_webhooks.gfcc_auth_on_register.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-vmq_webhooks.gfcc_auth_on_subscribe.hook = auth_on_subscribe
-vmq_webhooks.gfcc_auth_on_subscribe.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-vmq_webhooks.gfcc_auth_on_publish.hook = auth_on_publish
-vmq_webhooks.gfcc_auth_on_publish.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-vmq_webhooks.gfcc_on_client_wakeup.hook = on_client_wakeup
-vmq_webhooks.gfcc_on_client_wakeup.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-vmq_webhooks.gfcc_on_client_offline.hook = on_client_offline
-vmq_webhooks.gfcc_on_client_offline.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-vmq_webhooks.gfcc_on_client_gone.hook = on_client_gone
-vmq_webhooks.gfcc_on_client_gone.endpoint = http://${ADAPTER_HOST}:${ADAPTER_PORT}/vmq/hook
-
 
 ## Specify the address and port of the bridge to connect to. Several
 ## bridges can configured by using different bridge names (e.g. br0). If the

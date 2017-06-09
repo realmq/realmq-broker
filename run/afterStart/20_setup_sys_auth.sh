@@ -12,3 +12,7 @@ ${parts[1]}
 ${parts[1]}
 EOS
 done
+
+# enable plugins for system authentication/authorization
+vmq-admin plugin enable --name vmq_passwd
+vmq-admin plugin enable --name vmq_acl
