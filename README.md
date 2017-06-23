@@ -12,6 +12,7 @@ Platform MQTT Frontend
 
 ## Changelog
 ### next
+- upgrade to VerneMQ version 1.1.0
 - upgrade to `broker-base:0.3.0` base image
 - ensure `allow_anonymous = on` to ensure `auth_on_register` webhook gets
   called for incomming connections without username

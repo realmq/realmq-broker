@@ -12,7 +12,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -rf /var/lib/apt/lists/*
 
 # install vernemq
-ENV VMQ_VERSION 1.0.1
+ENV VMQ_VERSION 1.1.0
 RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vernemq_${VMQ_VERSION}-1_amd64.deb -o /tmp/vernemq.deb && \
     dpkg -i /tmp/vernemq.deb && \
     rm /tmp/vernemq.deb
