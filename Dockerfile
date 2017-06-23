@@ -2,7 +2,7 @@ FROM debian:jessie
 
 LABEL \
   description="GFCC Broker" \
-  version="0.2.1"
+  version="0.3.0"
 
 # install tools and dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
