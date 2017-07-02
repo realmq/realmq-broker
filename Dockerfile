@@ -2,7 +2,7 @@ FROM debian:jessie
 
 LABEL \
   description="GFCC Broker" \
-  version="0.2.1"
+  version="0.3.0"
 
 # install tools and dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -17,7 +17,7 @@ RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vern
     dpkg -i /tmp/vernemq.deb && \
     rm /tmp/vernemq.deb
 
-COPY vernemq.tpl /etc/default/
+COPY default.tpl /etc/default/
 COPY vernemq.conf.tpl /etc/vernemq/
 COPY run /opt/broker/run
 COPY run.sh /
