@@ -1,14 +1,10 @@
 image: docker:latest
 
 services:
-- docker:dind
-
-variables:
-  IMAGE_REF: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
-  IMAGE_LATEST: $CI_REGISTRY_IMAGE:latest
+  - docker:dind
 
 before_script:
-  - docker login -u gfcc-machine -p $GFCC_MACHINE_PASS registry.gitlab.com
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
 
 docker_image:
   stage: build
