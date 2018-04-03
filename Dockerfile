@@ -17,8 +17,7 @@ RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vern
     dpkg -i /tmp/vernemq.deb && \
     rm /tmp/vernemq.deb
 
-COPY default.tpl /etc/default/
-COPY vernemq.conf.tpl /etc/vernemq/
+COPY vernemq.default.tpl vernemq.conf.tpl /opt/broker/
 COPY run /opt/broker/run
 COPY run.sh /
 
