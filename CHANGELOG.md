@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.3.0] - 2017-06-02
 ### Changed
 - Merge with base image
+- Upgrade to VerneMQ version 1.1.0
+- Remove `on_deliver` hook due performance issues
 
 ## [0.2.1] - 2017-03-06
 ### Changed
