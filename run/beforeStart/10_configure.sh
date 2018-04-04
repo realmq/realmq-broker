@@ -11,6 +11,15 @@ set -a
 : ${ADAPTER_HOST:=broker-adapter}
 : ${ADAPTER_PORT:=8080}
 
+: ${TLS_PORT:=8883}
+: ${TLS_CAFILE:=/etc/vernemq/cacerts.pem}
+: ${TLS_CERTFILE:=/etc/vernemq/cert.pem}
+: ${TLS_KEYFILE:=/etc/vernemq/key.pem}
+: ${TLS_CIPHERS:=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256}
+
+# filter out cipher suites not supported by openssl
+#TLS_CIPHERS=$(openssl ciphers -s "$TLS_CIPHERS")
+
 cat /opt/broker/vernemq.conf.tpl | \
   envsubst '
     $NODE_NAME
@@ -22,6 +31,11 @@ cat /opt/broker/vernemq.conf.tpl | \
     $WS_PORT
     $ADAPTER_HOST
     $ADAPTER_PORT
+    $TLS_PORT
+    $TLS_CAFILE
+    $TLS_CERTFILE
+    $TLS_KEYFILE
+    $TLS_CIPHERS
   ' > /etc/vernemq/vernemq.conf
 
 cat /opt/broker/vernemq.default.tpl | \

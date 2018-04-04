@@ -188,6 +188,7 @@ listener.nr_of_acceptors = 10
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
 listener.tcp.default = ${HOST}:${PORT}
 listener.ws.default = ${HOST}:${WS_PORT}
+listener.ssl.default = ${HOST}:${TLS_PORT}
 
 ## listener.vmq.clustering is the IP address and TCP port that
 ## the broker will bind to accept connections from other cluster
@@ -244,7 +245,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.cafile = /etc/vernemq/cacerts.pem
+listener.ssl.cafile = ${TLS_CAFILE}
 
 ## Set the path to the PEM encoded server certificate
 ## on the protocol level or on the listener level:
@@ -258,7 +259,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.certfile = /etc/vernemq/cert.pem
+listener.ssl.certfile = ${TLS_CERTFILE}
 
 ## Set the path to the PEM encoded key file on the protocol
 ## level or on the listener level:
@@ -272,7 +273,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.keyfile = /etc/vernemq/key.pem
+listener.ssl.keyfile = ${TLS_KEYFILE}
 
 ## Set the list of allowed ciphers (each separated with a colon),
 ## on the protocol level or on the listener level. Reasonable defaults
@@ -287,7 +288,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - text
-## listener.ssl.ciphers =
+#listener.ssl.ciphers = ${TLS_CIPHERS}
 
 ## If you have 'listener.ssl.require_certificate' set to true,
 ## you can create a certificate revocation list file to revoke access
