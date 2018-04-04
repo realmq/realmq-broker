@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Configuration options for TLS connections ([gfcc/green-field#49])
 
+### Changed
+- Upgraded VerneMQ to version 1.3.1 ([#1])
+
 ### Fixed
 - Generation of vernemq process environment variables
 
+[#1]: https://gitlab.com/gfcc/broker/issues/1
 [gfcc/green-field#49]: https://gitlab.com/gfcc/green-field/issues/49
 
 ## [0.3.0] - 2017-06-02
