@@ -9,9 +9,5 @@ Platform MQTT Frontend
 - `CREDENTIALS` - set of credentials to connect to broker as system user,
   format: `user:pass [user:pass]...`, so username and password are separated by
   colon and credentials are separated by space
-
-## Changelog
-### 0.3.0
-- upgrade to VerneMQ version 1.1.0
-- merge with `broker-base` image
-- remove `on_deliver` hook due performance issues
+- `TLS_CERTFILE` - Path to pem encoded TLS certificate file
+- `TLS_KEYFILE` - Path to pem encoded TLS key file

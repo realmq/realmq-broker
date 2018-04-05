@@ -114,16 +114,17 @@ max_online_messages = 1000
 ##   - an integer
 max_offline_messages = 1000
 
-## This option sets the maximum payload size that VerneMQ will allow for publishers.
-## Messages that exceed this size will not be accepted by VerneMQ. The
-## default value is 0, which means that all valid MQTT messages are accepted. MQTT
-## imposes a maximum payload size of 268435455 bytes.
+## This option sets the maximum MQTT size that VerneMQ will
+## allow.  Messages that exceed this size will not be accepted by
+## VerneMQ. The default value is 0, which means that all valid MQTT
+## messages are accepted. MQTT imposes a maximum payload size of
+## 268435455 bytes.
 ##
 ## Default: 0
 ##
 ## Acceptable values:
 ##   - an integer
-message_size_limit = 0
+max_message_size = 0
 
 ## If a message is published with a QoS lower than the QoS of the subscription it is
 ## delivered to, VerneMQ can upgrade the outgoing QoS. This is a non-standard option.
@@ -188,6 +189,7 @@ listener.nr_of_acceptors = 10
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
 listener.tcp.default = ${HOST}:${PORT}
 listener.ws.default = ${HOST}:${WS_PORT}
+listener.ssl.default = ${HOST}:${TLS_PORT}
 
 ## listener.vmq.clustering is the IP address and TCP port that
 ## the broker will bind to accept connections from other cluster
@@ -244,7 +246,14 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.cafile = /etc/vernemq/cacerts.pem
+listener.ssl.cafile = ${TLS_CAFILE}
+
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## listener.https.cafile = /etc/vernemq/cacerts.pem
 
 ## Set the path to the PEM encoded server certificate
 ## on the protocol level or on the listener level:
@@ -258,7 +267,14 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.certfile = /etc/vernemq/cert.pem
+listener.ssl.certfile = ${TLS_CERTFILE}
+
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## listener.https.certfile = /etc/vernemq/cert.pem
 
 ## Set the path to the PEM encoded key file on the protocol
 ## level or on the listener level:
@@ -272,7 +288,21 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-## listener.ssl.keyfile = /etc/vernemq/key.pem
+listener.ssl.keyfile = ${TLS_KEYFILE}
+
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## listener.vmqs.keyfile = /etc/vernemq/key.pem
+
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## listener.https.keyfile = /etc/vernemq/key.pem
 
 ## Set the list of allowed ciphers (each separated with a colon),
 ## on the protocol level or on the listener level. Reasonable defaults
@@ -287,7 +317,21 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - text
-## listener.ssl.ciphers =
+#listener.ssl.ciphers = ${TLS_CIPHERS}
+
+##
+## Default:
+##
+## Acceptable values:
+##   - text
+## listener.vmqs.ciphers =
+
+##
+## Default:
+##
+## Acceptable values:
+##   - text
+## listener.https.ciphers =
 
 ## If you have 'listener.ssl.require_certificate' set to true,
 ## you can create a certificate revocation list file to revoke access
@@ -321,6 +365,20 @@ listener.mountpoint = off
 ##   - on or off
 ## listener.ssl.require_certificate = off
 
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+## listener.vmqs.require_certificate = off
+
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+## listener.https.require_certificate = off
+
 ## Configure the TLS protocol version (tlsv1, tlsv1.1, or tlsv1.2) to be
 ##
 ## Default: tlsv1.2
@@ -328,6 +386,20 @@ listener.mountpoint = off
 ## Acceptable values:
 ##   - text
 ## listener.ssl.tls_version = tlsv1.2
+
+##
+## Default: tlsv1.2
+##
+## Acceptable values:
+##   - text
+## listener.vmqs.tls_version = tlsv1.2
+
+##
+## Default: tlsv1.2
+##
+## Acceptable values:
+##   - text
+## listener.https.tls_version = tlsv1.2
 
 ## If 'listener.ssl.require_certificate' is enabled, you may enable
 ## 'listener.ssl.use_identity_as_username' to use the CN value from the client
@@ -583,6 +655,7 @@ vmq_diversity.auth_postgres.enabled = off
 ## Acceptable values:
 ##   - on or off
 vmq_diversity.auth_mysql.enabled = off
+
 ##
 ## Default: localhost
 ##
@@ -1079,7 +1152,7 @@ erlang.max_ports = 262144
 ##
 ## Acceptable values:
 ##   - one of: true, false
-## erlang.schedulers.utilization_balancing = tru
+## erlang.schedulers.utilization_balancing = true
 
 ## This parameter defines the percentage of total server memory
 ## to assign to LevelDB. LevelDB will dynamically adjust its internal
