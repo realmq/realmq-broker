@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.4.0]
 ### Added
 - Configuration options for TLS connections ([gfcc/green-field#49])
 
@@ -36,7 +38,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Initial setup
 
 
-[Unreleased]: https://gitlab.com/gfcc/broker/compare/0.3.0...develop
+[Unreleased]: https://gitlab.com/gfcc/broker/compare/0.4.0...develop
+[0.4.0]: https://gitlab.com/gfcc/broker/compare/0.3.0...0.4.0
 [0.3.0]: https://gitlab.com/gfcc/broker/compare/0.2.1...0.3.0
 [0.2.1]: https://gitlab.com/gfcc/broker/compare/0.2.0...0.2.1
 [0.2.0]: https://gitlab.com/gfcc/broker/compare/0.1.0...0.2.0
