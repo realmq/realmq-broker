@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Reenable `on_deliver` webhook for topic rewriting ([#2])
+
+[#2]: https://gitlab.com/gfcc/broker-adapter/issues/2
 
 ## [0.4.0]
 ### Added
