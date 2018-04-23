@@ -6,6 +6,7 @@ do
   IFS=':' read -r -a parts <<< "${user_pass}"
   echo "user ${parts[0]}" >> /etc/vernemq/vmq.acl
   echo 'topic #' >> /etc/vernemq/vmq.acl
+  echo 'topic $RMQ/#' >> /etc/vernemq/vmq.acl
   echo '' >> /etc/vernemq/vmq.acl
   vmq-passwd /etc/vernemq/vmq.passwd "${parts[0]}" <<EOS > /dev/null
 ${parts[1]}
