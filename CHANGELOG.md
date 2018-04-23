@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Reenable `on_deliver` webhook for topic rewriting ([#2])
+- Allow sys users to subscribe on `$RMQ` topics
 
 [#2]: https://gitlab.com/gfcc/broker-adapter/issues/2
 
