@@ -15,6 +15,7 @@ vmq-admin plugin enable --name vmq_webhooks
 vmq_register_webhook auth_on_register
 vmq_register_webhook auth_on_subscribe
 vmq_register_webhook auth_on_publish
+vmq_register_webhook on_deliver
 vmq_register_webhook on_client_wakeup
 vmq_register_webhook on_client_offline
 vmq_register_webhook on_client_gone
