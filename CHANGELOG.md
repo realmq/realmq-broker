@@ -12,23 +12,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.5.0] - 2018-04-23
 ### Changed
-- Reenable `on_deliver` webhook for topic rewriting ([#2])
+- Reenable `on_deliver` webhook for topic rewriting ([#gfcc-2])
 - Allow sys users to subscribe on `$RMQ` topics
 
-[#2]: https://gitlab.com/gfcc/broker-adapter/issues/2
+[#gfcc-2]: https://gitlab.com/gfcc/broker-adapter/issues/2
 
 ## [0.4.0]
 ### Added
-- Configuration options for TLS connections ([gfcc/green-field#49])
+- Configuration options for TLS connections ([#gfcc/green-field-49])
 
 ### Changed
-- Upgraded VerneMQ to version 1.3.1 ([#1])
+- Upgraded VerneMQ to version 1.3.1 ([#gfcc-1])
 
 ### Fixed
 - Generation of vernemq process environment variables
 
-[#1]: https://gitlab.com/gfcc/broker/issues/1
-[gfcc/green-field#49]: https://gitlab.com/gfcc/green-field/issues/49
+[#gfcc-1]: https://gitlab.com/gfcc/broker/issues/1
+[#gfcc/green-field-49]: https://gitlab.com/gfcc/green-field/issues/49
 
 ## [0.3.0] - 2017-06-02
 ### Changed
