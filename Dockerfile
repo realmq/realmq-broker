@@ -1,7 +1,8 @@
 FROM debian:jessie
 
 LABEL \
-  description="GFCC Broker" \
+  description="RealMQ Broker" \
+  vendor="RealMQ GmbH" \
   version="0.5.0"
 
 # install tools and dependencies

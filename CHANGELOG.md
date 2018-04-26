@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Rename gfcc to realmq. ([#1])
+
+[#1]: https://github.com/realmq/broker/issues/1
 
 ## [0.5.0] - 2018-04-23
 ### Changed
@@ -45,9 +49,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Initial setup
 
 
-[Unreleased]: https://gitlab.com/gfcc/broker/compare/0.4.0...develop
-[0.4.0]: https://gitlab.com/gfcc/broker/compare/0.3.0...0.4.0
-[0.3.0]: https://gitlab.com/gfcc/broker/compare/0.2.1...0.3.0
-[0.2.1]: https://gitlab.com/gfcc/broker/compare/0.2.0...0.2.1
-[0.2.0]: https://gitlab.com/gfcc/broker/compare/0.1.0...0.2.0
-[0.1.0]: https://gitlab.com/gfcc/broker/compare/6b8862c5...0.1.0
+[Unreleased]: https://github.com/realmq/broker/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/realmq/broker/compare/0.4.0...0.5.0
+[0.4.0]: https://github.com/realmq/broker/compare/0.3.0...0.4.0
+[0.3.0]: https://github.com/realmq/broker/compare/0.2.1...0.3.0
+[0.2.1]: https://github.com/realmq/broker/compare/0.2.0...0.2.1
+[0.2.0]: https://github.com/realmq/broker/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/realmq/broker/compare/6b8862c5...0.1.0
