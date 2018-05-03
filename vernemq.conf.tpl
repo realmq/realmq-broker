@@ -545,7 +545,7 @@ plugins.vmq_acl = off
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_diversity = off
+plugins.vmq_diversity = on
 
 ## Webhook based plugins.
 ##

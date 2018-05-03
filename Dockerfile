@@ -21,6 +21,7 @@ RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vern
 COPY vernemq.default.tpl vernemq.conf.tpl /opt/broker/
 COPY run /opt/broker/run
 COPY run.sh /
+COPY scripts /opt/broker/scripts
 
 CMD ["/run.sh"]
 EXPOSE 1883 44053 8888 8080
