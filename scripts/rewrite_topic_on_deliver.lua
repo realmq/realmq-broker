@@ -1,3 +1,10 @@
+environment = os.getenv("envrionment") or "develop"
+
+function log_debug(str)
+  if (environment == "develop") then
+    log.debug(str)
+  end
+end
 
 function string_starts_with(subject, start)
   return string.sub(subject, 1, string.len(start)) == start;
@@ -14,7 +21,7 @@ end
 -- $RMQ/realm/xxx/sync/user/yyy/topic -> $RMQ/sync/my/topic
 function rewrite_topic_on_deliver(params)
   local topic = params.topic;
-  log.debug("rewrite_topic_on_deliver: input: " .. topic);
+  log_debug("rewrite_topic_on_deliver: input: " .. topic);
 
   local is_sys_topic = false;
   if string_starts_with(topic, "$RMQ/") then
@@ -31,7 +38,7 @@ function rewrite_topic_on_deliver(params)
     topic = "$RMQ/" .. topic;
   end
 
-  log.debug("rewrite_topic_on_deliver: output: " .. topic);
+  log_debug("rewrite_topic_on_deliver: output: " .. topic);
   return {topic = topic};
 end
 
