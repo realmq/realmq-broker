@@ -8,6 +8,11 @@ code to connect the broker with the rest of the system.
 $ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 compile
 ```
 
+**Testing**
+```bash
+$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 enuit
+```
+
 **Upgrade dependencies**
 ```bash
 $ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 upgrade 
