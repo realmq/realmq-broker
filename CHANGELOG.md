@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Rewriting of topic from internal to external form on deliver will be done by
-  a lua script now ([#3])
+  the new adapter plugin ([#5])
 
-[#3]: https://github.com/RealMQ/broker/issues/3
+[#5]: https://github.com/RealMQ/broker/issues/5
 
 ## [0.6.0] - 2018-05-01
 ### Changed
