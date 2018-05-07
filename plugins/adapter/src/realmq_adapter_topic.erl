@@ -9,8 +9,8 @@ to_external([<<"$RMQ">>|Rest]) ->
   adjust_sync_to_external(WithoutRealm);
 to_external(Topic) -> strip_realm(Topic).
 
-strip_realm([<<"realm">>|[_|Rest]]) -> Rest;
+strip_realm([<<"realm">>|[_RealmId|Rest]]) -> Rest;
 strip_realm(Topic) -> Topic.
 
-adjust_sync_to_external([<<"sync">>|[<<"user">>|[_|Rest]]]) -> [<<"sync">>|[<<"my">>|Rest]];
+adjust_sync_to_external([<<"sync">>|[<<"user">>|[_UserId|Rest]]]) -> [<<"sync">>|[<<"my">>|Rest]];
 adjust_sync_to_external(Topic) -> Topic.
