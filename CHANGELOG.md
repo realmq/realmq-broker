@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Rewriting of topic from internal to external form on deliver will be done by
+  a lua script now ([#3])
+
+[#3]: https://github.com/RealMQ/broker/issues/3
 
 ## [0.6.0] - 2018-05-01
 ### Changed
