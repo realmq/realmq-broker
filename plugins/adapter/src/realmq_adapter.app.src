@@ -1,0 +1,20 @@
+{application, realmq_adapter,
+ [
+  {description, "RealMQ Adapter Plugin for VerneMQ"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { realmq_adapter_app, []}},
+  {env, [
+         %% this tells VerneMQ to look in the file 'realmq_adapter_plugin'
+         %% for the plugin hook functions. The format is:
+         %%  {ModuleName, HookName, Arity, Opts}
+         {vmq_plugin_hooks, 
+          [
+           {realmq_adapter, on_deliver, 4, []}
+          ]}
+        ]}
+ ]}.
