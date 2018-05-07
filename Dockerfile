@@ -25,7 +25,6 @@ RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vern
 COPY vernemq.default.tpl vernemq.conf.tpl /opt/broker/
 COPY run /opt/broker/run
 COPY run.sh /
-COPY scripts /opt/broker/scripts
 COPY \
   --from=adapter_plugin_builder \
   /usr/src/plugin/_build/default/lib/realmq_adapter \
