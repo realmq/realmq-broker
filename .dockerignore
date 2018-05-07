@@ -1,2 +1,4 @@
 .*
-README.md
+/*.md
+plugins/*/_build
+plugins/*/*.md

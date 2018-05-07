@@ -1,3 +1,7 @@
+FROM erlang:19 as adapter_plugin_builder
+COPY plugins/adapter /usr/src/plugin
+RUN cd /usr/src/plugin && rebar3 compile
+
 FROM debian:jessie
 
 LABEL \
@@ -22,6 +26,10 @@ COPY vernemq.default.tpl vernemq.conf.tpl /opt/broker/
 COPY run /opt/broker/run
 COPY run.sh /
 COPY scripts /opt/broker/scripts
+COPY \
+  --from=adapter_plugin_builder \
+  /usr/src/plugin/_build/default/lib/realmq_adapter \
+  /opt/broker/plugins/lib/realmq_adapter
 
 CMD ["/run.sh"]
 EXPOSE 1883 44053 8888 8080
