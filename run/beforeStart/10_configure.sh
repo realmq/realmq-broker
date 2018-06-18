@@ -8,7 +8,7 @@ set -a
 : ${HOST:=127.0.0.1}
 : ${PORT:=1883}
 : ${WS_PORT:=8080}
-: ${ADAPTER_HOST:=broker-adapter}
+: ${ADAPTER_HOST:=platform}
 : ${ADAPTER_PORT:=8080}
 
 : ${TLS_PORT:=8883}

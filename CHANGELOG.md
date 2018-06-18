@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Rewriting of topic from internal to external form on deliver will be done by
   the new adapter plugin ([#5])
+- Adjustment of webhooks to comply to url structure of new platform service ([#7]).
 
 [#5]: https://github.com/RealMQ/broker/issues/5
+[#7]: https://github.com/RealMQ/broker/issues/7
 
 ## [0.6.0] - 2018-05-01
 ### Changed

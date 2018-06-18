@@ -6,7 +6,10 @@
 function vmq_register_webhook {
   hook=$1
   echo "register webhook: ${hook}"
-  vmq-admin webhooks register hook=${hook} endpoint="${ADAPTER_BASEURI}/vmq/hook"
+
+  hook_url_part=$(tr _ - <<< "$hook")
+  hook_url="${ADAPTER_BASEURI}/broker/v1/vmq/${hook_url_part}"
+  vmq-admin webhooks register hook="$hook" endpoint="$hook_url"
 }
 
 # enable webhooks plugin
