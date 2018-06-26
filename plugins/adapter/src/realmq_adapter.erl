@@ -4,6 +4,7 @@
 
 -export([on_deliver/4]).
 
+on_deliver(<<"adapter">>, _SubscriberId, _Topic, _Payload) -> {ok};
 on_deliver(_UserName, _SubscriberId, Topic, _Payload) ->
   error_logger:info_msg("realmq: on_deliver: Internal topic: ~p", [Topic]),
   ExternalTopic = realmq_adapter_topic:to_external(Topic),
