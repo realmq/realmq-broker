@@ -7,7 +7,7 @@ FROM debian:jessie
 LABEL \
   description="RealMQ Broker" \
   vendor="RealMQ GmbH" \
-  version="0.6.0"
+  version="0.7.0"
 
 # install tools and dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
