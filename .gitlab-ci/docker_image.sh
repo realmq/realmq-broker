@@ -5,21 +5,26 @@ if [ -z "$GITLAB_CI" -o "$GITLAB_CI" != "true" ]; then
   exit 1
 fi
 
-if [ -z "$CI_REGISTRY_IMAGE" ]; then
-  echo "missing CI_REGISTRY_IMAGE" 1>&2
-  exit 2
-fi
-
 if [ -z "$CI_COMMIT_REF_NAME" ]; then
   echo "missing CI_COMMIT_REF_NAME" 1>&2
   exit 3
 fi
 
+if [ -z "$DOCKER_USER" ]; then
+  echo "missing DOCKER_USER" 1>&2
+  exit 4
+fi
+
+if [ -z "$DOCKER_PASSWORD" ]; then
+  echo "missing DOCKER_PASSWORD" 1>&2
+  exit 5
+fi
+
 root=$(dirname $0)/..
 tag=$(echo $CI_COMMIT_REF_NAME | tr A-Z a-z | sed 's/[^a-z0-9._-]/-/g')
-image_ref=$CI_REGISTRY_IMAGE:$tag
+image_ref=realmq/realmq-broker:$tag
 
 set -ex
 docker build -t $image_ref "$root"
-docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 docker push $image_ref
