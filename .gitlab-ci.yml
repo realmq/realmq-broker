@@ -3,9 +3,6 @@ image: docker:latest
 services:
   - docker:dind
 
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-
 docker_image:
   stage: build
   script: .gitlab-ci/docker_image.sh

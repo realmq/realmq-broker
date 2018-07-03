@@ -21,4 +21,5 @@ image_ref=$CI_REGISTRY_IMAGE:$tag
 
 set -ex
 docker build -t $image_ref "$root"
+docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
 docker push $image_ref
