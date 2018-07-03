@@ -10,13 +10,13 @@ if [ -z "$CI_REGISTRY_IMAGE" ]; then
   exit 2
 fi
 
-if [ -z "$CI_BUILD_REF_NAME" ]; then
-  echo "missing CI_BUILD_REF_NAME" 1>&2
+if [ -z "$CI_COMMIT_REF_NAME" ]; then
+  echo "missing CI_COMMIT_REF_NAME" 1>&2
   exit 3
 fi
 
 root=$(dirname $0)/..
-tag=$(echo $CI_BUILD_REF_NAME | tr A-Z a-z | sed 's/[^a-z0-9._-]/-/g')
+tag=$(echo $CI_COMMIT_REF_NAME | tr A-Z a-z | sed 's/[^a-z0-9._-]/-/g')
 image_ref=$CI_REGISTRY_IMAGE:$tag
 
 set -ex
