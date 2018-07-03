@@ -10,21 +10,11 @@ if [ -z "$CI_COMMIT_REF_NAME" ]; then
   exit 3
 fi
 
-if [ -z "$DOCKER_USER" ]; then
-  echo "missing DOCKER_USER" 1>&2
-  exit 4
-fi
-
-if [ -z "$DOCKER_PASSWORD" ]; then
-  echo "missing DOCKER_PASSWORD" 1>&2
-  exit 5
-fi
-
 root=$(dirname $0)/..
 tag=$(echo $CI_COMMIT_REF_NAME | tr A-Z a-z | sed 's/[^a-z0-9._-]/-/g')
-image_ref=realmq/realmq-broker:$tag
+image_name=realmq/realmq-broker
+image_ref=$image_name:$tag
 
 set -ex
 docker build -t $image_ref "$root"
-docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 docker push $image_ref
