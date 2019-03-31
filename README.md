@@ -18,4 +18,7 @@ Platform MQTT Frontend
 
 
 ## License
+Copyright (c) 2018-2019 RealMQ GmbH.<br />
+The files in this archive are released under the [MIT License](LICENSE).
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker?ref=badge_large)
