@@ -1,4 +1,6 @@
 # RealMQ Broker
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker?ref=badge_shield)
+
 Platform MQTT Frontend
 
 ## Docker Env Parameter
@@ -12,3 +14,7 @@ Platform MQTT Frontend
   colon and credentials are separated by space
 - `TLS_CERTFILE` - Path to pem encoded TLS certificate file
 - `TLS_KEYFILE` - Path to pem encoded TLS key file
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Frealmq%2Frealmq-broker?ref=badge_large)
