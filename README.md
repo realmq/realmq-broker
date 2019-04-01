@@ -12,3 +12,7 @@ Platform MQTT Frontend
   colon and credentials are separated by space
 - `TLS_CERTFILE` - Path to pem encoded TLS certificate file
 - `TLS_KEYFILE` - Path to pem encoded TLS key file
+
+## License
+Copyright (c) 2018-2019 RealMQ GmbH.<br />
+The files in this archive are released under the [MIT License](LICENSE).
