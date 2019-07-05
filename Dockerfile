@@ -1,4 +1,4 @@
-FROM erlang:19 as adapter_plugin_builder
+FROM erlang:21 as adapter_plugin_builder
 COPY plugins/adapter /usr/src/plugin
 RUN cd /usr/src/plugin && rebar3 compile
 
@@ -17,8 +17,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -rf /var/lib/apt/lists/*
 
 # install vernemq
-ENV VMQ_VERSION 1.3.1
-RUN curl -sL https://bintray.com/artifact/download/erlio/vernemq/deb/jessie/vernemq_${VMQ_VERSION}-1_amd64.deb -o /tmp/vernemq.deb && \
+ENV VMQ_VERSION 1.8.0
+
+RUN curl -sL https://github.com/vernemq/vernemq/releases/download/${VMQ_VERSION}/vernemq-${VMQ_VERSION}.jessie.x86_64.deb -o /tmp/vernemq.deb && \
     dpkg -i /tmp/vernemq.deb && \
     rm /tmp/vernemq.deb
 
