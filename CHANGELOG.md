@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- TLS files will be copied to `/etc/vernemq` and their ownership and access
+  permissions adjusted to ensure vernemq can read them ([#20]).
+
+[#20]: https://github.com/RealMQ/broker/issues/20
+
 ## [0.7.1] - 2018-07-03
 ### Changed
 - Stop rewriting of internal topics for sys-users to keep context (e.g. realmId).

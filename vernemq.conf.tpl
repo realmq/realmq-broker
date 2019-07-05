@@ -246,7 +246,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.cafile = ${TLS_CAFILE}
+listener.ssl.cafile = /etc/vernemq/cacerts.pem
 
 ##
 ## Default:
@@ -267,7 +267,7 @@ listener.ssl.cafile = ${TLS_CAFILE}
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.certfile = ${TLS_CERTFILE}
+listener.ssl.certfile = /etc/vernemq/cert.pem
 
 ##
 ## Default:
@@ -288,7 +288,7 @@ listener.ssl.certfile = ${TLS_CERTFILE}
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.keyfile = ${TLS_KEYFILE}
+listener.ssl.keyfile = /etc/vernemq/key.pem
 
 ##
 ## Default:
