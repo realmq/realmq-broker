@@ -12,6 +12,7 @@ Platform MQTT Frontend
 - `CREDENTIALS` - set of credentials to connect to broker as system user,
   format: `user:pass [user:pass]...`, so username and password are separated by
   colon and credentials are separated by space
+- `TLS_ENABLED` - TLS support enabled (`1`) or not (`0`) (default enabled)
 - `TLS_CERTFILE` - Path to pem encoded TLS certificate file
 - `TLS_KEYFILE` - Path to pem encoded TLS key file
 

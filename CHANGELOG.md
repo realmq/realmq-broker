@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- New parameter `TLS_ENABLED` to control if broker should run with TLS support
+  (`1`) or not (`0`) (default enabled) ([#17]).
+
 ### Fixed
 - TLS files will be copied to `/etc/vernemq` and their ownership and access
   permissions adjusted to ensure vernemq can read them ([#20]).
 
+[#17]: https://github.com/realmq/realmq-broker/issues/17
 [#20]: https://github.com/RealMQ/broker/issues/20
 
 ## [0.7.1] - 2018-07-03

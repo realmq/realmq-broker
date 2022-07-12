@@ -1,3 +1,48 @@
+#!/usr/bin/env bash
+: ${ENVIRONMENT:=production}
+: ${NODE_NAME:="VerneMQ@127.0.0.1"}
+: ${AUTH_ANONYMOUS:=off}
+: ${LOG_LEVEL:=info}
+: ${MAX_CLIENT_ID_SIZE:=345} # 256 * 1.333 = 341,248 -> 345
+: ${HOST:=127.0.0.1}
+: ${PORT:=1883}
+: ${ADAPTER_HOST:=platform}
+: ${ADAPTER_PORT:=8080}
+
+: ${WS_ENABLED:=1}
+: ${WS_PORT:=8080}
+
+: ${TLS_ENABLED:=1}
+: ${TLS_PORT:=8883}
+: ${TLS_CAFILE:=/etc/vernemq/cacerts.pem}
+: ${TLS_CERTFILE:=/etc/vernemq/cert.pem}
+: ${TLS_KEYFILE:=/etc/vernemq/key.pem}
+: ${TLS_CIPHERS:=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256}
+
+# filter out cipher suites not supported by openssl
+#TLS_CIPHERS=$(openssl ciphers -s "$TLS_CIPHERS")
+
+function listeners {
+    echo "listener.tcp.default = ${HOST}:${PORT}";
+    if [[ "$WS_ENABLED" = "1" ]]; then
+        echo "listener.ws.default = ${HOST}:${WS_PORT}"
+    fi
+    if [[ "$TLS_ENABLED" = "1" ]]; then
+        echo "listener.ssl.default = ${HOST}:${TLS_PORT}"
+    fi
+}
+
+function tls_cafile {
+    [[ "$TLS_ENABLED" = "1" ]] && echo "listener.ssl.cafile = ${TLS_CAFILE}"
+}
+function tls_certfile {
+    [[ "$TLS_ENABLED" = "1" ]] && echo "listener.ssl.certfile = ${TLS_CERTFILE}"
+}
+function tls_keyfile {
+    [[ "$TLS_ENABLED" = "1" ]] && echo "listener.ssl.keyfile = ${TLS_KEYFILE}"
+}
+
+cat <<EOF
 ## Allow anonymous users to connect, default is 'off'
 ##
 ## Default: off
@@ -187,9 +232,7 @@ listener.nr_of_acceptors = 10
 ##
 ## Acceptable values:
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
-listener.tcp.default = ${HOST}:${PORT}
-listener.ws.default = ${HOST}:${WS_PORT}
-listener.ssl.default = ${HOST}:${TLS_PORT}
+$(listeners)
 
 ## listener.vmq.clustering is the IP address and TCP port that
 ## the broker will bind to accept connections from other cluster
@@ -246,7 +289,7 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.cafile = /etc/vernemq/cacerts.pem
+$(tls_cafile)
 
 ##
 ## Default:
@@ -267,7 +310,7 @@ listener.ssl.cafile = /etc/vernemq/cacerts.pem
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.certfile = /etc/vernemq/cert.pem
+$(tls_certfile)
 
 ##
 ## Default:
@@ -288,7 +331,7 @@ listener.ssl.certfile = /etc/vernemq/cert.pem
 ##
 ## Acceptable values:
 ##   - the path to a file
-listener.ssl.keyfile = /etc/vernemq/key.pem
+$(tls_keyfile)
 
 ##
 ## Default:
@@ -418,7 +461,7 @@ listener.ssl.keyfile = /etc/vernemq/key.pem
 ##   - on or off
 ## listener.ssl.use_identity_as_username = off
 
-## Enable the $SYSTree Reporter.
+## Enable the \$SYSTree Reporter.
 ##
 ## Default: on
 ##
@@ -426,9 +469,9 @@ listener.ssl.keyfile = /etc/vernemq/key.pem
 ##   - on or off
 systree_enabled = on
 
-## The integer number of milliseconds between updates of the $SYS subscription hierarchy,
+## The integer number of milliseconds between updates of the \$SYS subscription hierarchy,
 ## which provides status information about the broker. If unset, defaults to 20 seconds.
-## Set to 0 to disable publishing the $SYS hierarchy completely.
+## Set to 0 to disable publishing the \$SYS hierarchy completely.
 ##
 ## Default: 20000
 ##
@@ -777,7 +820,7 @@ vmq_diversity.auth_redis.enabled = off
 ## vmq_diversity.memcache.port = 11211
 
 ## vmq_diversity.<name>.plugin = <file> loads a specific lua
-## script when `vmq_diversity` starts. The scripts are loaded in the
+## script when \`vmq_diversity\` starts. The scripts are loaded in the
 ## order defined by the names given, i.e., the script with <name>
 ## 'script1' is started before the plugin with <name> 'script2'.
 ##
@@ -979,7 +1022,7 @@ vmq_diversity.auth_redis.enabled = off
 ## severity):
 ## off: disabled
 ## file: the file specified by log.console.file
-## console: to standard output (seen when using `vmq attach-direct`)
+## console: to standard output (seen when using \`vmq attach-direct\`)
 ## both: log.console.file and standard out.
 ##
 ## Default: file
@@ -1058,11 +1101,11 @@ log.crash.size = 10MB
 ## information see:
 ## https://github.com/basho/lager/blob/master/README.md#internal-log-rotation
 ##
-## Default: $D0
+## Default: \$D0
 ##
 ## Acceptable values:
 ##   - text
-log.crash.rotation = $D0
+log.crash.rotation = \$D0
 
 ## The number of rotated crash logs to keep. When set to
 ## 'current', only the current open log file is kept.
@@ -1165,3 +1208,5 @@ erlang.max_ports = 262144
 ## Acceptable values:
 ##   - an integer
 leveldb.maximum_memory.percent = 70
+
+EOF
