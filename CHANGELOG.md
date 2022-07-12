@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New parameter `TLS_ENABLED` to control if broker should run with TLS support
   (`1`) or not (`0`) (default enabled) ([#17]).
 
+### Changed
+- Release the files in this archive under the [MIT License](LICENSE).
+
 ### Fixed
 - TLS files will be copied to `/etc/vernemq` and their ownership and access
   permissions adjusted to ensure vernemq can read them ([#20]).
