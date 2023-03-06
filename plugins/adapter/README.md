@@ -5,15 +5,15 @@ code to connect the broker with the rest of the system.
 ## Maintenance
 **Compile**
 ```bash
-$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 compile
+$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:24 rebar3 compile
 ```
 
 **Testing**
 ```bash
-$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 enuit
+$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:24 rebar3 enuit
 ```
 
 **Upgrade dependencies**
 ```bash
-$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:19 rebar3 upgrade 
+$ docker run --rm -it -v $PWD:/usr/src/plugin -w /usr/src/plugin erlang:24 rebar3 upgrade 
 ```

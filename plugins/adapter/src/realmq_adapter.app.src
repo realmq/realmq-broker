@@ -14,7 +14,7 @@
          %%  {ModuleName, HookName, Arity, Opts}
          {vmq_plugin_hooks, 
           [
-           {realmq_adapter, on_deliver, 4, []}
+           {realmq_adapter, on_deliver, 6, []}
           ]}
         ]}
  ]}.

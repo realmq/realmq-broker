@@ -12,12 +12,16 @@
 : ${WS_ENABLED:=1}
 : ${WS_PORT:=8080}
 
-: ${TLS_ENABLED:=1}
+: ${TLS_ENABLED:=0}
 : ${TLS_PORT:=8883}
-: ${TLS_CAFILE:=/etc/vernemq/cacerts.pem}
-: ${TLS_CERTFILE:=/etc/vernemq/cert.pem}
-: ${TLS_KEYFILE:=/etc/vernemq/key.pem}
 : ${TLS_CIPHERS:=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256}
+
+: ${HTTP_ENABLED:=0}
+: ${HTTP_PORT:=8888}
+
+TLS_CAFILE=/etc/vernemq/cacerts.pem
+TLS_CERTFILE=/etc/vernemq/cert.pem
+TLS_KEYFILE=/etc/vernemq/key.pem
 
 # filter out cipher suites not supported by openssl
 #TLS_CIPHERS=$(openssl ciphers -s "$TLS_CIPHERS")
@@ -29,6 +33,9 @@ function listeners {
     fi
     if [[ "$TLS_ENABLED" = "1" ]]; then
         echo "listener.ssl.default = ${HOST}:${TLS_PORT}"
+    fi
+    if [[ "$HTTP_ENABLED" = "1" ]]; then
+        echo "listener.http.default = ${HOST}:${HTTP_PORT}"
     fi
 }
 
@@ -43,7 +50,20 @@ function tls_keyfile {
 }
 
 cat <<EOF
-## Allow anonymous users to connect, default is 'off'
+## To use this pre-packaged version of VerneMQ you must agree
+## to our end user license agreement (EULA).
+## The EULA can be found on https://vernemq.com/end-user-license-agreement.
+##
+## Default: no
+##
+## Acceptable values:
+##   - one of: yes, no
+accept_eula = yes
+
+## Allow anonymous users to connect, default is 'off'. !!NOTE!!
+## Enabling this completely disables authentication of the clients and
+## should only be used for testing/development purposes or in case
+## clients are authenticated by some other means.
 ##
 ## Default: off
 ##
@@ -83,14 +103,27 @@ allow_subscribe_during_netsplit = off
 ##   - on or off
 allow_unsubscribe_during_netsplit = off
 
-## Allows a client to logon multiple times using the same client id
-## (non-standard behaviour!).
+## Allows a client to logon multiple times using the same client
+## id (non-standard behaviour!). This feature is DEPRECATED and will
+## be removed in VerneMQ 2.0.
 ##
 ## Default: off
 ##
 ## Acceptable values:
 ##   - on or off
 allow_multiple_sessions = off
+
+## Client registrations can be either happen in a coordinated or
+## uncoordinated fashion. Uncoordinated registrations are faster and
+## will cause other clients with the same client-id to be eventually
+## disconnected, while coordinated ensures that any other client with
+## the same client-id will be immediately disconnected.
+##
+## Default: on
+##
+## Acceptable values:
+##   - on or off
+coordinate_registrations = on
 
 ## Set the time in seconds VerneMQ waits before a retry, in case a (QoS=1 or QoS=2) message
 ## delivery gets no answer.
@@ -122,6 +155,20 @@ max_client_id_size = ${MAX_CLIENT_ID_SIZE}
 ## Acceptable values:
 ##   - text
 ## persistent_client_expiration = 1w
+
+## The maximum delay for a last will message. This setting
+## applies only to MQTTv5 sessions and can be used to override the
+## value provided by the client.
+## The delay can be either 'client' which means the value specified by
+## the client is used, or an integer followed by one of 's', 'h' 'd',
+## 'w', 'm', 'y' for day, week, month, and year used to cap the value
+## provided by the client..
+##
+## Default: client
+##
+## Acceptable values:
+##   - text
+## max_last_will_delay = client
 
 ## The maximum number of QoS 1 or 2 messages that can be in the process of being
 ## transmitted simultaneously. This includes messages currently going through handshakes
@@ -180,6 +227,24 @@ max_message_size = 0
 ##   - on or off
 upgrade_outgoing_qos = off
 
+## listener.tcp.buffer_sizes is an list of three integers
+## (sndbuf,recbuf,buffer) specifying respectively the kernel TCP send
+## buffer, the kernel TCP receive buffer and the user-level buffer
+## size in the erlang driver.
+## It is recommended to have val(user-level buffer) >= val(receive
+## buffer) to avoid performance issues because of unnecessary copying.
+## If not set, the operating system defaults are used.
+## This option can be set on the protocol level by:
+## - listener.tcp.buffer_sizes
+## - listener.ssl.buffer_sizes
+## or on the listener level by:
+## - listener.tcp.my_tcp_listener.buffer_sizes
+## - listener.ssl.my_ssl_listener.buffer_sizes
+##
+## Acceptable values:
+##   - text
+## listener.tcp.buffer_sizes = 4096,16384,32768
+
 ## listener.max_connections is an integer or 'infinity' defining
 ## the maximum number of concurrent connections. This option can be overridden
 ## on the protocol level by:
@@ -200,6 +265,16 @@ upgrade_outgoing_qos = off
 ##   - the text "infinity"
 listener.max_connections = 10000
 
+## Set the maximum frame in bytes that a WebSocket connection is allowed to
+## send. If the client tries to send more in one frame, the server will disconnect it.
+##
+## Default: 268435456
+##
+## Acceptable values:
+##   - an integer
+##   - the text "infinity"
+max_ws_frame_size = 268435456
+
 ## Set the nr of acceptors waiting to concurrently accept new connections.
 ## This can be specified either on the protocol level:
 ## - listener.tcp.nr_of_acceptors
@@ -218,21 +293,56 @@ listener.max_connections = 10000
 ##   - an integer
 listener.nr_of_acceptors = 10
 
-## listener.tcp.<name> is an IP address and TCP port that
-## the broker will bind to. You can define multiple listeners e.g:
-## - listener.tcp.default = 127.0.0.1:1883
-## - listener.tcp.internal = 127.0.0.1:10883
-## - listener.tcp.my_other_listener = 127.0.0.1:10884
-## This also works for SSL listeners and WebSocket handlers:
-## - listener.ssl.default = 127.0.0.1:8883
-## - listener.ws.default = 127.0.0.1:800
-## - listener.wss.default = 127.0.0.1:880
+## 'listener.tcp.my_listener.allow_anonymous_override' configures whether
+## this listener is allowed to override the global allow_anonymous setting.
+## The setting has one single purpose: to give a listener the capability to switch off
+## all authentication plugins. (that is override a global allow_anonymous=off with a per-listener allow_anonymous=on).
+## Specifically, it can allow TLS listeners to disable internal authentication (using only client certificates as
+## authentication) while keeping all the other MQTT listeners safe.
+## global | listener | Result for listener:  (on = anonymous access allowed)
+## on     | on       | on
+## off    | on       | on
+## off    | off      | off
+## on     | off      | on
+## Both values are simply OR'ed together. Please note that this does not allow you to globally allow anonymous access, and
+## then selectively switch off single listeners!
+## - listener.tcp.my_listener.allow_anonymous_override
+## - listener.ssl.my_listener.allow_anonymous_override
+## Allowed values are 'on' or 'off'. The default value for an unconfigured listener will be 'off'.
 ##
-## Default: 127.0.0.1:1883
+## Default: off
 ##
 ## Acceptable values:
-##   - an IP/port pair, e.g. 127.0.0.1:10011
-$(listeners)
+##   - on or off
+## listener.tcp.name.allow_anonymous_override = off
+
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+## listener.ssl.name.allow_anonymous_override = off
+
+## 'listener.tcp.allowed_protocol_versions' configures which
+## protocol versions are allowed for an MQTT listener. The allowed
+## protocol versions can be specified the tcp, websocket or ssl level:
+## - listener.tcp.allowed_protocol_versions
+## - listener.ws.allowed_protocol_versions
+## - listener.wss.allowed_protocol_versions
+## - listener.ssl.allowed_protocol_versions
+## or for a specific listener:
+## - listener.tcp.my_tcp_listener.allowed_protocol_versions
+## - listener.ws.my_ws_listener.allowed_protocol_versions
+## - listener.wss.my_ws_listener.allowed_protocol_versions
+## - listener.ssl.my_ws_listener.allowed_protocol_versions
+## Allowed values are 3 (MQTT 3.1), 4 (MQTT 3.1.1), 5 (MQTT 5.0), 131
+## (MQTT 3.1 bridge), 132 (MQTT 3.1.1 bridge).
+##
+## Default: 3,4,5,131
+##
+## Acceptable values:
+##   - text
+## listener.tcp.allowed_protocol_versions = 3,4,5
 
 ## listener.vmq.clustering is the IP address and TCP port that
 ## the broker will bind to accept connections from other cluster
@@ -257,24 +367,7 @@ listener.vmq.clustering = 0.0.0.0:44053
 ##
 ## Acceptable values:
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
-listener.http.default = 127.0.0.1:8888
-
-## Set the mountpoint on the protocol level or on the listener level
-## - listener.tcp.mountpoint
-## - listener.ssl.mountpoint
-## - listener.ws.mountpoint
-## - listener.wss.mountpoint
-## listener level:
-## - listener.tcp.my_tcp_listener.mountpoint
-## - listener.ssl.my_ssl_listener.mountpoint
-## - listener.ws.my_ws_listener.mountpoint
-## - listener.wss.my_wss_listener.mountpoint
-##
-## Default: off
-##
-## Acceptable values:
-##   - text
-listener.mountpoint = off
+#listener.http.default = 127.0.0.1:8888
 
 ## The cafile is used to define the path to a file containing
 ## the PEM encoded CA certificates that are trusted. Set the cafile
@@ -289,7 +382,8 @@ listener.mountpoint = off
 ##
 ## Acceptable values:
 ##   - the path to a file
-$(tls_cafile)
+## listener.ssl.cafile = /etc/vernemq/cacerts.pem
+# $(tls_cafile)
 
 ##
 ## Default:
@@ -347,7 +441,8 @@ $(tls_keyfile)
 ##   - the path to a file
 ## listener.https.keyfile = /etc/vernemq/key.pem
 
-## Set the list of allowed ciphers (each separated with a colon),
+## Set the list of allowed ciphers (each separated with a colon,
+## e.g. "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384"),
 ## on the protocol level or on the listener level. Reasonable defaults
 ## are used if nothing is specified:
 ## - listener.ssl.ciphers
@@ -360,6 +455,7 @@ $(tls_keyfile)
 ##
 ## Acceptable values:
 ##   - text
+## listener.ssl.ciphers =
 #listener.ssl.ciphers = ${TLS_CIPHERS}
 
 ##
@@ -376,6 +472,35 @@ $(tls_keyfile)
 ##   - text
 ## listener.https.ciphers =
 
+## Set the list of allowed elliptical curves (each separated with a colon,
+## e.g. "[sect571k1,secp521r1,brainpoolP512r1]"), on the protocol level or on the listener level.
+## All known curves are used if nothing is specified.
+## - listener.ssl.eccs
+## - listener.wss.eccs
+## or on the listener level:
+## - listener.ssl.my_ssl_listener.eccs
+## - listener.wss.my_wss_listener.eccs
+##
+## Default:
+##
+## Acceptable values:
+##   - text
+## listener.ssl.eccs = [brainpoolP384r1, secp384r1, sect283k1]
+
+##
+## Default:
+##
+## Acceptable values:
+##   - text
+## listener.vmqs.eccs = [brainpoolP384r1, secp384r1, sect283k1]
+
+##
+## Default:
+##
+## Acceptable values:
+##   - text
+## listener.https.eccs = [brainpoolP384r1, secp384r1, sect283k1]
+
 ## If you have 'listener.ssl.require_certificate' set to true,
 ## you can create a certificate revocation list file to revoke access
 ## to particular client certificates. If you have done this, use crlfile
@@ -390,7 +515,7 @@ $(tls_keyfile)
 ## Default:
 ##
 ## Acceptable values:
-##   - text
+##   - the path to a file
 ## listener.ssl.crlfile =
 
 ## Enable this option if you want to use SSL client certificates
@@ -588,7 +713,7 @@ plugins.vmq_acl = off
 ##
 ## Acceptable values:
 ##   - on or off
-plugins.vmq_diversity = on
+plugins.vmq_diversity = off
 
 ## Webhook based plugins.
 ##
@@ -605,6 +730,27 @@ plugins.vmq_webhooks = off
 ## Acceptable values:
 ##   - on or off
 plugins.vmq_bridge = off
+
+## Limits the maximum topic depth
+##
+## Default: 10
+##
+## Acceptable values:
+##   - an integer
+topic_max_depth = 10
+
+## Specifies the metadata plugin that is used for storing and replicating
+## VerneMQ metadata objects such as MQTT subscriptions and retained messages.
+## The default is kept at \`vmq_plumtree\` for compatibility with existing deployments.
+## For new cluster deployments, the recommendation is to use 'vmq_swc' from the
+## beginning. Note that the 2 protocols are not compatible, so clusters can't be
+## mixed.
+##
+## Default: vmq_swc
+##
+## Acceptable values:
+##   - one of: vmq_plumtree, vmq_swc
+metadata_plugin = vmq_swc
 
 ## Set the path to an access control list file.
 ##
@@ -692,6 +838,130 @@ vmq_diversity.auth_postgres.enabled = off
 ##   - text
 ## vmq_diversity.postgres.database = vernemq_db
 
+## Specify if the postgresql driver should use TLS or not.
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+vmq_diversity.postgres.ssl = off
+
+## The cafile is used to define the path to a file containing
+## the PEM encoded CA certificates that are trusted.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.postgres.cafile = /etc/vernemq/cafile.pem
+
+## Set the path to the PEM encoded server certificate.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.postgres.certfile = /etc/vernemq/cert.pem
+
+## Set the path to the PEM encoded key file.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.postgres.keyfile = /etc/vernemq/keyfile.pem
+
+## The password hashing method to use in PostgreSQL:
+##
+## Default: crypt
+##
+## Acceptable values:
+##   - one of: crypt, bcrypt
+vmq_diversity.postgres.password_hash_method = crypt
+
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+vmq_diversity.auth_cockroachdb.enabled = off
+
+##
+## Default: localhost
+##
+## Acceptable values:
+##   - text
+## vmq_diversity.cockroachdb.host = localhost
+
+##
+## Default: 5432
+##
+## Acceptable values:
+##   - an integer
+## vmq_diversity.cockroachdb.port = 5432
+
+##
+## Default: root
+##
+## Acceptable values:
+##   - text
+## vmq_diversity.cockroachdb.user = root
+
+##
+## Default: password
+##
+## Acceptable values:
+##   - text
+## vmq_diversity.cockroachdb.password = password
+
+##
+## Default: vernemq_db
+##
+## Acceptable values:
+##   - text
+## vmq_diversity.cockroachdb.database = vernemq_db
+
+## Specify if the cockroachdb driver should use TLS or not.
+##
+## Default: on
+##
+## Acceptable values:
+##   - on or off
+vmq_diversity.cockroachdb.ssl = on
+
+## The cafile is used to define the path to a file containing
+## the PEM encoded CA certificates that are trusted.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.cockroachdb.cafile = /etc/vernemq/cafile.pem
+
+## Set the path to the PEM encoded server certificate.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.cockroachdb.certfile = /etc/vernemq/cert.pem
+
+## Set the path to the PEM encoded key file.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.cockroachdb.keyfile = /etc/vernemq/keyfile.pem
+
+## The password hashing method to use in CockroachDB:
+##
+## Default: bcrypt
+##
+## Acceptable values:
+##   - one of: sha256, bcrypt
+vmq_diversity.cockroachdb.password_hash_method = bcrypt
+
 ##
 ## Default: off
 ##
@@ -734,6 +1004,24 @@ vmq_diversity.auth_mysql.enabled = off
 ##   - text
 ## vmq_diversity.mysql.database = vernemq_db
 
+## The password hashing method to use in MySQL:
+## password: Default for compatibility, deprecated since MySQL 5.7.6 and not
+## usable with MySQL 8.0.11+.
+## Docs: https://dev.mysql.com/doc/refman/5.7/en/encryption-functions.html#function_password
+## md5: Calculates an MD5 128-bit checksum of the password.
+## Docs: https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_md5
+## sha1: Calculates the SHA-1 160-bit checksum for the password.
+## Docs: https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha1
+## sha256: Calculates the SHA-2 hash of the password, using 256 bits.
+## Works only if MySQL has been configured with SSL support.
+## Docs: https://dev.mysql.com/doc/refman/8.0/en/encryption-functions.html#function_sha2
+##
+## Default: password
+##
+## Acceptable values:
+##   - one of: password, md5, sha1, sha256
+vmq_diversity.mysql.password_hash_method = password
+
 ##
 ## Default: off
 ##
@@ -766,9 +1054,49 @@ vmq_diversity.auth_mongodb.enabled = off
 ## vmq_diversity.mongodb.password =
 
 ##
+## Default: admin
+##
+## Acceptable values:
+##   - text
+## vmq_diversity.mongodb.auth_source =
+
+##
 ## Acceptable values:
 ##   - text
 ## vmq_diversity.mongodb.database =
+
+## Specify if the mongodb driver should use TLS or not.
+##
+## Default: off
+##
+## Acceptable values:
+##   - on or off
+vmq_diversity.mongodb.ssl = off
+
+## The cafile is used to define the path to a file containing
+## the PEM encoded CA certificates that are trusted.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.mongodb.cafile = /etc/vernemq/cafile.pem
+
+## Set the path to the PEM encoded server certificate.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.mongodb.certfile = /etc/vernemq/cert.pem
+
+## Set the path to the PEM encoded key file.
+##
+## Default:
+##
+## Acceptable values:
+##   - the path to a file
+## vmq_diversity.mongodb.keyfile = /etc/vernemq/keyfile.pem
 
 ##
 ## Default: off
@@ -819,24 +1147,74 @@ vmq_diversity.auth_redis.enabled = off
 ##   - an integer
 ## vmq_diversity.memcache.port = 11211
 
-## vmq_diversity.<name>.plugin = <file> loads a specific lua
+## vmq_diversity.<name>.file = <file> loads a specific lua
 ## script when \`vmq_diversity\` starts. The scripts are loaded in the
 ## order defined by the names given, i.e., the script with <name>
 ## 'script1' is started before the plugin with <name> 'script2'.
+## Scripts loaded like this are loaded after the scripts in the
+## default script dir.
 ##
 ## Acceptable values:
 ##   - the path to a file
 ## vmq_diversity.script1.file = path/to/my/script.lua
+
+## The pool_size specifies how many bcrypt port operations are
+## allowed concurrently. The value \`auto\` will try to detect all
+## logical cpus and set the pool size to that number minus 1.
+## If the number of logical cpus cannot be detected, a value of 1 is used.
+##
+## Default: 1
+##
+## Acceptable values:
+##   - an integer
+##   - one of: auto
+vmq_bcrypt.pool_size = 1
+
+## The pool_size specifies how many bcrypt NIF operations are
+## allowed concurrently. The value \`auto\` will try to detect all
+## logical cpus and set the pool size to that number minus 1.
+## If the number of logical cpus cannot be detected, a value of 1 is used.
+##
+## Default: 4
+##
+## Acceptable values:
+##   - an integer
+##   - one of: auto
+vmq_bcrypt.nif_pool_size = 4
+
+## Specifies the max workers to overflow of the bcrypt NIF program pool.
+##
+## Default: 10
+##
+## Acceptable values:
+##   - an integer
+vmq_bcrypt.nif_pool_max_overflow = 10
+
+## Specifies the number of bcrypt log rounds, defining the hashing complexity.
+##
+## Default: 12
+##
+## Acceptable values:
+##   - an integer
+vmq_bcrypt.default_log_rounds = 12
+
+## Specify where bcrypt is called as an Erlang port or NIF
+##
+## Default: port
+##
+## Acceptable values:
+##   - one of: nif, port
+vmq_bcrypt.mechanism = port
 
 ## To configure and register a webhook a hook and an endpoint
 ## need to be configured and this is achieved by associating both with
 ## a name. vmq_webhooks.<name>.hook = <hook> associates the hook
 ## <hook> with the name <name>. Webhooks are registered in the order
 ## of the name given to it. Therefore a webhook with name 'webhook1'
-## is regisered before a webhook with the name 'webhook2'.
+## is registered before a webhook with the name 'webhook2'.
 ##
 ## Acceptable values:
-##   - one of: auth_on_register, auth_on_publish, auth_on_subscribe, on_register, on_publish, on_subscribe, on_unsubscribe, on_deliver, on_offline_message, on_client_wakeup, on_client_offline, on_client_gone
+##   - one of: auth_on_register, auth_on_publish, auth_on_subscribe, on_register, on_publish, on_subscribe, on_unsubscribe, on_deliver, on_offline_message, on_client_wakeup, on_client_offline, on_client_gone, on_session_expired, auth_on_register_m5, auth_on_publish_m5, auth_on_subscribe_m5, on_register_m5, on_publish_m5, on_subscribe_m5, on_unsubscribe_m5, on_deliver_m5, on_auth_m5
 ## vmq_webhooks.webhook1.hook = auth_on_register
 
 ## Associate an endpoint with a name.
@@ -844,6 +1222,15 @@ vmq_diversity.auth_redis.enabled = off
 ## Acceptable values:
 ##   - text
 ## vmq_webhooks.webhook1.endpoint = http://localhost/myendpoints
+
+## Configure TLS version for HTTPS webhook calls
+## HTTPS webhooks.
+##
+## Default: tlsv1.2
+##
+## Acceptable values:
+##   - text
+## vmq_webhooks.tls_version = tlsv1.2
 
 ## Specify the address and port of the bridge to connect to. Several
 ## bridges can configured by using different bridge names (e.g. br0). If the
@@ -918,6 +1305,8 @@ vmq_diversity.auth_redis.enabled = off
 ## local prefix and subscribe to the resulting topic on the local
 ## broker. When an outgoing message is processed, the local prefix
 ## will be removed from the topic then the remote prefix added.
+## For shared subscriptions topic prefixes are applied only to the
+## topic part of the subscription.
 ##
 ## Acceptable values:
 ##   - text
@@ -942,6 +1331,25 @@ vmq_diversity.auth_redis.enabled = off
 ##   - on or off
 ## vmq_bridge.tcp.br0.try_private = on
 
+## Set the MQTT protocol version to be used by the bridge.
+##
+## Default: 3
+##
+## Acceptable values:
+##   - one of: 3, 4
+## vmq_bridge.tcp.br0.mqtt_version = on
+
+## Maximum number of outgoing messages the bridge will buffer
+## while not connected to the remote broker. Messages published while
+## the buffer is full are dropped. A value of 0 means buffering is
+## disabled.
+##
+## Default: 0
+##
+## Acceptable values:
+##   - an integer
+## vmq_bridge.tcp.br0.max_outgoing_buffered_messages = 0
+
 ## The cafile is used to define the path to a file containing
 ## the PEM encoded CA certificates that are trusted.
 ##
@@ -950,15 +1358,6 @@ vmq_diversity.auth_redis.enabled = off
 ## Acceptable values:
 ##   - the path to a file
 ## vmq_bridge.ssl.sbr0.cafile = /etc/vernemq/cacerts.pem
-
-## Define the path to a folder containing
-## the PEM encoded CA certificates that are trusted.
-##
-## Default:
-##
-## Acceptable values:
-##   - the path to a file
-## vmq_bridge.ssl.sbr0.capath = /etc/vernemq/cacerts
 
 ## Set the path to the PEM encoded server certificate.
 ##
@@ -1018,6 +1417,14 @@ vmq_diversity.auth_redis.enabled = off
 ##   - text
 ## vmq_bridge.ssl.sbr0.psk =
 
+## Allow the bridge to open SSL connections to remote broker with wildcard certs
+##
+## Default: https
+##
+## Acceptable values:
+##   - one of: https
+## vmq_bridge.ssl.name.customize_hostname_check = on
+
 ## Where to emit the default log messages (typically at 'info'
 ## severity):
 ## off: disabled
@@ -1037,7 +1444,7 @@ log.console = file
 ##
 ## Acceptable values:
 ##   - one of: debug, info, warning, error
-log.console.level = ${LOG_LEVEL}
+log.console.level = info
 
 ## When 'log.console' is set to 'file' or 'both', the file where
 ## console messages will be logged.
@@ -1118,6 +1525,9 @@ log.crash.rotation = \$D0
 log.crash.rotation.keep = 5
 
 ## Name of the Erlang node
+## Default: VerneMQ@127.0.0.1
+## Acceptable values:
+## - text
 ##
 ## Default: VerneMQ@127.0.0.1
 ##
@@ -1208,5 +1618,8 @@ erlang.max_ports = 262144
 ## Acceptable values:
 ##   - an integer
 leveldb.maximum_memory.percent = 70
+
+## listeners
+$(listeners)
 
 EOF
