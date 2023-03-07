@@ -4,6 +4,7 @@
 Platform MQTT Frontend
 
 ## Docker Env Parameter
+- `VERNEMQ_ACCEPT_EULA` **required** - You need to accept the [VerneMQ EULA](https://vernemq.com/end-user-license-agreement) by setting this var to `yes`, default: `no`
 - `HOST` - IP address to listen on, default: `127.0.0.1`, set to `0.0.0.0` to
   listen on all assigned IP addresses
 - `ADAPTER_HOST` - host or IP address of adapter service
@@ -16,7 +17,6 @@ Platform MQTT Frontend
 - `TLS_KEYFILE` - Path to pem encoded TLS key file
 - `HTTP_ENABLED` - HTTP support enabled (`1`) or not (`0`) (default disabled)
 - `HTTP_PORT` - Post HTTP listens on, default: `8888`
-
 
 ## License
 Copyright (c) 2018-2022 RealMQ GmbH.<br />
