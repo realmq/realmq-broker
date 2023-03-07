@@ -19,6 +19,8 @@
 : ${HTTP_ENABLED:=0}
 : ${HTTP_PORT:=8888}
 
+: ${VERNEMQ_ACCEPT_EULA:=no}
+
 TLS_CAFILE=/etc/vernemq/cacerts.pem
 TLS_CERTFILE=/etc/vernemq/cert.pem
 TLS_KEYFILE=/etc/vernemq/key.pem
@@ -58,7 +60,7 @@ cat <<EOF
 ##
 ## Acceptable values:
 ##   - one of: yes, no
-accept_eula = yes
+accept_eula = ${VERNEMQ_ACCEPT_EULA}
 
 ## Allow anonymous users to connect, default is 'off'. !!NOTE!!
 ## Enabling this completely disables authentication of the clients and
