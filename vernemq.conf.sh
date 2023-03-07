@@ -457,7 +457,6 @@ $(tls_keyfile)
 ##
 ## Acceptable values:
 ##   - text
-## listener.ssl.ciphers =
 #listener.ssl.ciphers = ${TLS_CIPHERS}
 
 ##
