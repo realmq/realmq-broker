@@ -31,4 +31,4 @@ COPY \
   /opt/broker/plugins/lib/realmq_adapter
 
 CMD ["/run.sh"]
-EXPOSE 1883 8883 8888 44053
+EXPOSE 1883 8883 8080 8888 44053
