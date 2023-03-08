@@ -7,7 +7,7 @@ FROM debian:bullseye
 LABEL \
   description="RealMQ Broker" \
   vendor="RealMQ GmbH" \
-  version="0.7.1"
+  version="0.8.0"
 
 # install tools and dependencies
 RUN export DEBIAN_FRONTEND=noninteractive && \
